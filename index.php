@@ -28,7 +28,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 Online: http://www.gnu.org/licenses/gpl.txt
 */
-
+$brand = $model = $body = $trim = $engine = $fuel = $transmission = $power = $efficiency = $emission = $criteria = $search_string = '';
+$price = 0;
 $cars_file = fopen("data.csv", "r");
 $cars_data = fgetcsv($cars_file, 1000, ",");
 
@@ -47,105 +48,110 @@ for ($s = 1; $s <= count($array) - 1; $s++) {
 }
 
 ?>
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+    <meta charset="UTF-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Hugo 0.108.0">
+    <title>Car Builder</title>
+    <link href="https://fonts.googleapis.com/css?family=Poppins:400,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="assets\css\bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href='assets\css\style.css' />
+    <script src="<?php echo ('assets\js\bootstrap.bundle.min.js'); ?>"></script>
+    <script src="<?php echo ('assets\js\javascript.js'); ?>"></script>
 
+</head>
 
-<?php
-function render_data($brands, $array)
-{
-    ob_start(); ?>
+<body>
+    <!-- <script>
+        function useValue(id) {
+            var input_value = document.getElementById('listGroupCheckableRadios' + id);
+            var NameValue = input_value.value;
+            document.getElementById("btnClickedValue").value = NameValue;
 
-    <!DOCTYPE html>
-    <html lang="en">
+            // use it
+            console.log(NameValue); // just to show the new value
 
-    <head>
-        <meta charset="UTF-8">
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="description" content="">
-        <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
-        <meta name="generator" content="Hugo 0.108.0">
-        <title>Car Builder</title>
-        <link href="https://fonts.googleapis.com/css?family=Poppins:400,600&display=swap" rel="stylesheet">
-        <link rel="stylesheet" type="text/css" href="assets\css\bootstrap.min.css" />
-        <link rel="stylesheet" type="text/css" href='assets\css\style.css' />
-        <script src="<?php echo ('assets\js\bootstrap.bundle.min.js'); ?>"></script>
-        <script src="<?php echo ('assets\js\javascript.js'); ?>"></script>
+            return NameValue;
+        }
 
-    </head>
-
-    <body>
-        <?php
-        $brand = $model = $body = $trim = $engine = $fuel = $transmission = $power = $efficiency = $emission = $criteria = '';
-        $price = 0;
-        ?>
-        <ul class="nav nav-pills nav-fill">
-            <li class="nav-item"> <a class="nav-link active" aria-current="page" href="#brand" onclick="open_tab(event, 'brand')">Brands</a> </li>
-            <li class="nav-item"> <a class="nav-link" href="#model" onclick="open_tab(event, 'model')">Models</a> </li>
-            <li class="nav-item"> <a class="nav-link" href="#body" onclick="open_tab(event, 'body')">Body Type</a> </li>
-            <li class="nav-item"> <a class="nav-link" href="#trim" onclick="open_tab(event, 'trim')">Trim Level</a> </li>
-            <li class="nav-item"> <a class="nav-link" href="#engine" onclick="open_tab(event, 'engine')">Engine</a> </li>
-            <li class="nav-item"> <a class="nav-link" href="#fuel type" onclick="open_tab(event, 'fuel type')">Fuel Type</a>
-            </li>
-            <li class="nav-item"> <a class="nav-link" href="#transmission" onclick="open_tab(event, 'transmission')">Transmission</a> </li>
-            <li class="nav-item"> <a class="nav-link" href="#power" onclick="open_tab(event, 'power')">Power</a> </li>
-            <li class="nav-item"> <a class="nav-link" href="#efficiency" onclick="open_tab(event, 'efficiency')">Efficiency</a> </li>
-            <li class="nav-item"> <a class="nav-link" href="#emission" onclick="open_tab(event, 'emission')">Emission</a>
-            </li>
-            <li class="nav-item"> <a class="nav-link" href="#price" onclick="open_tab(event, 'price')">Price</a> </li>
-        </ul>
-        <div class="tabs">
-            <div class="brands tab" id="brand">
-                <h3 class="tab-title">Car Brands</h3>
-                <div class="list-group list-group-checkable border-0 flex-sm-row" id="brands-selector">
-                    <?php
-                    for ($s = 0; $s <= count($brands) - 1; $s++) {
-                        echo "<input class='list-group-item-check' type='radio' name='listGroupCheckableRadios' id='listGroupCheckableRadios" . $s . "' value='" . $brands[$s] . "'  
-                    onclick='open_tab(event, \"model\", \"" . $brands[$s] . "\")'>
-        <label class='list-group-item rounded-3 py-3' for='listGroupCheckableRadios" . $s . "'>
-            " . $brands[$s] . "
-        </label>";
-                    }
-                    ?>
-                </div>
-                <button class="btn btn-primary" onclick="open_tab(event, 'model')">Model selection</button>
+        if (value !== undefined) {
+            search_string = search_string.concat(value + " " + object + " ");
+        }
+        nameValidationInput.onchange = useValue;
+        nameValidationInput.onblur = useValue;
+    </script> -->
+    <ul class="nav nav-pills nav-fill">
+        <li class="nav-item"> <a class="nav-link active" aria-current="page" href="#brand" onclick="open_tab(event, 'brand')">Brands</a> </li>
+        <li class="nav-item"> <a class="nav-link" href="#model" onclick="open_tab(event, 'model')">Models</a> </li>
+        <li class="nav-item"> <a class="nav-link" href="#body" onclick="open_tab(event, 'body')">Body Type</a> </li>
+        <li class="nav-item"> <a class="nav-link" href="#trim" onclick="open_tab(event, 'trim')">Trim Level</a> </li>
+        <li class="nav-item"> <a class="nav-link" href="#engine" onclick="open_tab(event, 'engine')">Engine</a> </li>
+        <li class="nav-item"> <a class="nav-link" href="#fuel type" onclick="open_tab(event, 'fuel type')">Fuel Type</a>
+        </li>
+        <li class="nav-item"> <a class="nav-link" href="#transmission" onclick="open_tab(event, 'transmission')">Transmission</a> </li>
+        <li class="nav-item"> <a class="nav-link" href="#power" onclick="open_tab(event, 'power')">Power</a> </li>
+        <li class="nav-item"> <a class="nav-link" href="#efficiency" onclick="open_tab(event, 'efficiency')">Efficiency</a> </li>
+        <li class="nav-item"> <a class="nav-link" href="#emission" onclick="open_tab(event, 'emission')">Emission</a>
+        </li>
+        <li class="nav-item"> <a class="nav-link" href="#price" onclick="open_tab(event, 'price')">Price</a> </li>
+    </ul>
+    <form class="form tabs" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+        <div class="brands tab" id="brand">
+            <h3 class="tab-title">Car Brands</h3>
+            <div class="list-group list-group-checkable border-0 flex-sm-row" id="brands-selector">
+                <?php
+                for ($s = 0; $s <= count($brands) - 1; $s++) {
+                    echo "<input onclick='get_value(\"" . $brands[$s] . "\")' class='list-group-item-check' type='radio' name='listGroupCheckableRadios' id='listGroupCheckableRadios" . $s . "' value='" . $brands[$s] . "'  
+                    '>
+                    <label class='list-group-item rounded-3 py-3' for='listGroupCheckableRadios" . $s . "'>" . $brands[$s] . "</label>";
+                }?>
             </div>
+            <button type="button" id="nextBtn" class="btn btn-primary" onclick="nextPrev(1)">Model selection</button>
 
-            <?php
-            while (!isset($_GET['values'])) {
-                sleep(3);
-            }
-            $criteria = $_GET['values'];
-            echo ($criteria);
-            ?>
-        </div </body>
-
-    </html>
-<?php
-    return ob_get_clean();
-}
-function get_model($criteria, $array)
-{
-    ob_start(); ?>
-    <div class="models tab" id="model">
-        <h3 class="tab-title">Car models
-        </h3>
-        <div class="list-group list-group-checkable d-grid border-0 flex-sm-row" id="models-selector">
-            <?php
-            for ($s = 1; $s <= count($array) - 1; $s++) {
-                if ($array[$s][1] === $criteria) {
-                    echo
-                    '<input class="list-group-item-check pe-none" type="radio" name="listGroupCheckableRadios" id="listGroupCheckableRadios' . $s . '" value="' . $array[$s][2] . '" checked="">
-        <label class="list-group-item rounded-3 py-3" for="listGroupCheckableRadios' . $s . '">' . $array[$s][2] . '</label>';
-                }
-            }
-            ?>
         </div>
-        <button class="btn btn-primary" onclick="open_tab(event, 'body')">Body Type selection</button>
-    </div>
+
+
+        <!-- Getting car models -->
+        <div class="models tab" id="model">
+            <h3 class="tab-title">Car models
+            </h3>
+            <div class="list-group list-group-checkable d-grid border-0 flex-sm-row" id="models-selector">
+                <?php
+                if (isset($_REQUEST['listGroupCheckableRadios'])) {
+                    $criteria = $_REQUEST['listGroupCheckableRadios'];
+                }
+
+                for ($s = 1; $s <= count($array) - 1; $s++) {
+                    if ($array[$s][1] === $criteria) {
+                        echo
+                        "<input class='list-group-item-check pe-none' type='radio' name='listGroupCheckableRadios' id='listGroupCheckableRadios" . $s .  "'value='" . $array[$s][2] . "' checked=''>
+        <label class='list-group-item rounded-3 py-3' for='listGroupCheckableRadios" . $s . "'>
+        " . $array[$s][2] . "</label>";
+                    }
+                }
+                ?>
+            </div>
+            <button type="button" id="prevBtn" class='btn btn-primary' onclick='nextPrev(-1)'>Previous</button>
+            <button type="button" id="nextBtn" class="btn btn-primary" onclick="nextPrev(1)">Model selection</button>
+        </div>
+        </form>
+    </body>
+</html>
+
+
+
+
+
+
+
+
 <?php
-    return ob_get_clean();
-}
 
 function get_body($criteria, $array)
 {
@@ -308,9 +314,5 @@ function get_price($criteria, $array)
 <?php
     return ob_get_clean();
 }
-
-
-
-
 
 ?>
