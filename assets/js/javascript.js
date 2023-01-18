@@ -5,10 +5,10 @@ showTab(currentTab);
 
 function open_tab(evt, object) { 
   var i, tabcontent, tablinks;
-  // tabcontent = document.getElementsByClassName("tab");
-  // for (i = 0; i < tabcontent.length; i++) {
-  //   tabcontent[i].style.display = "none";
-  // }
+  tabcontent = document.getElementsByClassName("tab");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
   tablinks = document.getElementsByClassName("nav-link");
   for (i = 0; i < tablinks.length; i++) {
     tablinks[i].className = tablinks[i].className.replace(" active", "");
@@ -53,11 +53,6 @@ function get_value(value) {
 }
 
 function nextPrev(n) {
-  var i, tablinks;
-  tablinks = document.getElementsByClassName("nav-link");
-  for (i = 0; i < tablinks.length; i++) {
-    tablinks[i].className = tablinks[i].className.replace(" active", "");
-  }
   // This function will figure out which tab to display
   var x = document.getElementsByClassName("tab");
   // Exit the function if any field in the current tab is invalid:
@@ -99,13 +94,26 @@ function validateForm() {
   return valid; // return the valid status
 }
 
-function fixStepIndicator(n) {
-  // This function removes the "active" class of all steps...
-  var i, x = document.getElementsByClassName("step");
-  for (i = 0; i < x.length; i++) {
-    x[i].className = x[i].className.replace(" active", "");
-  }
-  //... and adds the "active" class to the current step:
-  x[n].className += " active";
-}
+// function fixStepIndicator(n) {
+//   // This function removes the "active" class of all steps...
+//   var i, x = document.getElementsByClassName("step");
+//   for (i = 0; i < x.length; i++) {
+//     x[i].className = x[i].className.replace(" active", "");
+//   }
+//   //... and adds the "active" class to the current step:
+//   x[n].className += " active";
+// }
 
+
+function useValue(evt) {
+  var input_value = evt.srcElement.id;
+  var NameValue = input_value.value;
+
+  // use it
+  console.log(NameValue); // just to show the new value
+  if (NameValue !== undefined) {
+      search_string = search_string.concat(" " + NameValue);
+  }
+
+  return NameValue;
+}
