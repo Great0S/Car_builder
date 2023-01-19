@@ -43,10 +43,35 @@ define( 'CAR_BUILDER__MINIMUM_WP_VERSION', '5.0' );
 define( 'CAR_BUILDER__PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'CAR_BUILDER_DELETE_LIMIT', 10000 );
 
-register_activation_hook( __FILE__, 'plugin_activate' );
-register_activation_hook( __FILE__, 'plugin_deactivate' );
+// register jquery and style on initialization
+add_action('init', 'register_script');
+function register_script(){
+	wp_register_script( 'custom_jquery', plugins_url('/js/javascript.js', __FILE__), array('jquery'), '3.6.1' );
+	wp_register_script( 'bootstrap_jquery', plugins_url('/js/bootstrap.bundle.min.js', __FILE__), array('jquery'), '3.6.1' );
 
-require('view/layout.php');
+	wp_register_style( 'new_style', plugins_url('/css/style.css', __FILE__));
+	wp_register_style( 'bootstrap_style', plugins_url('/css/bootstrap.min.css', __FILE__));
+}
+
+// use the registered jquery and style above
+add_action('wp_enqueue_scripts', 'enqueue_style');
+function enqueue_style(){
+	wp_enqueue_script('custom_jquery');
+	wp_enqueue_script('bootstrap_jquery');
+
+	wp_enqueue_style( 'new_style' );
+	// wp_enqueue_style( 'bootstrap_style' );
+}
+
+function elegance_referal_init()
+{
+    if(is_page('motorcar-cars-builder')){   
+        $dir = plugin_dir_path( __FILE__ );
+        include($dir."view/page-layout.php");
+        die();
+    }
+}
+
+add_action( 'wp', 'elegance_referal_init' );
 
 ?>
-
