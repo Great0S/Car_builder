@@ -9,7 +9,6 @@ require(plugin_dir_path(__FILE__) . '..\includes\data.php');
 
 ?>
 <?php get_header(); ?>
-
 <?php astra_entry_before(); ?>
 <article <?php
             echo astra_attr(
@@ -38,8 +37,8 @@ require(plugin_dir_path(__FILE__) . '..\includes\data.php');
                 <div class="uagb-container-inner-blocks-wrap">
                     <h1 class="entry-title">Get started with Bootstrap</h1>
                     <p class="uagb-ifb-desc">Customize your car right now with our car builder</p>
-                    <form method="post" action="" class="tab active" id="brands-form">                        
-                            <div id="message"></div>                        
+                    <form method="post" action="" class="tab active" id="brands-form">
+                        <div id="message"></div>
                         <div>
                             <button type="submit" id="submit" name="string" class="btn btn-primary" onclick="sub(); return false;">Next</button>
                         </div>
@@ -49,18 +48,19 @@ require(plugin_dir_path(__FILE__) . '..\includes\data.php');
     </main>
 
     <script>
-        data = '';
-        brand = "<?php if (isset($_SESSION['brand'])) {
-                        echo $_SESSION['brand'];
-                    } else {
-                        echo "0";
-                    } ?>";
-        model = "<?php if (isset($_SESSION['model'])) {
-                        echo $_SESSION['model'];
-                    } else {
-                        echo "0";
-                    } ?>";
-        times = 1;
+        "use strict";
+        let data = '';
+        let brand = "<?php if (isset($_SESSION['brand'])) {
+                            echo htmlspecialchars($_SESSION['brand'], ENT_QUOTES, 'UTF-8');
+                        } else {
+                            echo "0";
+                        } ?>";
+        let model = "<?php if (isset($_SESSION['model'])) {
+                            echo htmlspecialchars($_SESSION['model'], ENT_QUOTES, 'UTF-8');
+                        } else {
+                            echo "0";
+                        } ?>";
+        let times = 1;
 
         function select() {
             jQuery(".nav-item").on("click", function() {
@@ -95,20 +95,17 @@ require(plugin_dir_path(__FILE__) . '..\includes\data.php');
         }
 
         jQuery(window).ready(function() {
-
-            jQuery("div#message").html('<?php process_data($cars_file, $cars_data, $file, "", "") ?>');
+            select();
+            jQuery("div#message").html('<?php process_data($cars_file, $cars_data, $file, "") ?>');
         });
-        // jQuery('itemValue').on("click", "itemValue", function() {
-        //     alert("Submit is pressed!!");
-        // });
 
         function sub() {
             event.preventDefault();
-            ajaxurl = '//localhost/wp-content/plugins/car_builder/view/get_data.php';
+            let ajaxurl = '//localhost/wp-content/plugins/car_builder/view/get_data.php';
 
-            if (data == undefined || data == '') {
-                console.log("No item was selected")
-                alert("Please select a brand first")
+            if (data === undefined || data === '') {
+                console.log("No item was selected");
+                alert("Please select a brand first");
             } else {
                 jQuery.post(ajaxurl, data, function(response) {
                     jQuery("div#message").html(response);
