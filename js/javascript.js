@@ -3,7 +3,8 @@ var currentTab = 0; // Current tab is set to be the first tab (0)
 // showTab(currentTab);
 
 
-function open_tab(evt, object) { 
+
+function open_tab(evt, object) {
   var i, tabcontent, tablinks;
   tabcontent = document.getElementsByClassName("tab");
   for (i = 0; i < tabcontent.length; i++) {
@@ -19,7 +20,7 @@ function open_tab(evt, object) {
 //   if (x[n] !== undefined) {
 //     x[n].style.display = "block";
 //   }
-  
+
 //   //... and fix the Previous/Next buttons:
 //   if (n == 0) {
 //     document.getElementById("prevBtn").style.display = "none";
@@ -39,11 +40,10 @@ function return_value() {
   if (typeof search_string === "string" && search_string.trim().length !== 0) {
     return search_string;
   }
-  
-  }
+}
 
 function get_value(value) {
-   if (value !== undefined) {
+  if (value !== undefined) {
     search_string = value;
   }
 }
@@ -67,10 +67,12 @@ function nextPrev(n) {
   showTab(currentTab);
 }
 
-
 function validateForm() {
   // This function deals with validation of the form fields
-  var x, y, i, valid = true;
+  var x,
+    y,
+    i,
+    valid = true;
   x = document.getElementsByClassName("tab");
   y = x[currentTab].getElementsByTagName("input");
   // A loop that checks every input field in the current tab:
@@ -94,11 +96,12 @@ function submitForm(e) {
   e.preventDefault();
   var http = new XMLHttpRequest();
   http.open("POST", "#", true);
-  http.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-  var params = "search=" + document.getElementsByClassName('.data_select_btn').value;
+  http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  var params =
+    "search=" + document.getElementsByClassName(".data_select_btn").value;
   alert(params);
   http.send(params);
-  http.onload = function() {
-      console.log(http.responseText);
-  }
+  http.onload = function () {
+    console.log(http.responseText);
+  };
 }

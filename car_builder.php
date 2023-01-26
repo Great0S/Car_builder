@@ -38,6 +38,12 @@ if ( !function_exists( 'add_action' ) ) {
 	exit;
 }
 
+if ( !defined('ABSPATH') ) {
+    //If wordpress isn't loaded load it up.
+    $path = $_SERVER['DOCUMENT_ROOT'];
+    include_once $path . '/wp-load.php';
+}
+
 define( 'CAR_BUILDER_VERSION', '1.0' );
 define( 'CAR_BUILDER__MINIMUM_WP_VERSION', '5.0' );
 define( 'CAR_BUILDER__PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
@@ -60,7 +66,7 @@ function enqueue_style(){
 	wp_enqueue_script('bootstrap_jquery');
 
 	wp_enqueue_style( 'new_style' );
-	// wp_enqueue_style( 'bootstrap_style' );
+	wp_enqueue_style( 'bootstrap_style' );
 }
 
 function elegance_referal_init()

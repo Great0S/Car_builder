@@ -2,11 +2,11 @@
 session_start();
 
 require_once(plugin_dir_path(__FILE__) . '..\functions.php');
-require_once(plugin_dir_path(__FILE__) . '..\includes\data.php');
+require(plugin_dir_path(__FILE__) . '..\includes\data.php');
 
 /* Template Name: Form Page */
 // Template Post Type: builder_form
-$count = 0;
+
 ?>
 <?php get_header(); ?>
 
@@ -21,15 +21,10 @@ $count = 0;
             );
             ?>>
     <?php astra_entry_top(); ?>
-    <?php if ($_SERVER['REQUEST_METHOD'] == "POST") {
-        $count + 1;
-        echo "<script>alert('request came here!');</script>";
-        echo "<script>alert(" . $_SERVER['REQUEST_URI'] . ")</script>";
-        get_StringUrl(basename($_SERVER['REQUEST_URI']), "itemValue");
-        echo '<ul class="grid-list column-list nav">';
-        echo get_data($array, null, $count, $count - 1);
-        echo '</ul>';
-        die();
+
+    <?php
+    if ($_SESSION['count'] > 0) {
+        $_SESSION['count'] = 0;
     } ?>
 
     <!-- Content -->
@@ -43,80 +38,9 @@ $count = 0;
                 <div class="uagb-container-inner-blocks-wrap">
                     <h1 class="entry-title">Get started with Bootstrap</h1>
                     <p class="uagb-ifb-desc">Customize your car right now with our car builder</p>
-                    <span id="message">This is feedback</span>
-                    <form method="post" action="" class="tab active" id="brands-form">
-                        <div class="mb-3 form-check">
-                            <ul class="grid-list column-list nav">
-                                <?php echo get_data($array, null, 1, null); ?>
-                            </ul>
-                        </div>
+                    <form method="post" action="" class="tab active" id="brands-form">                        
+                            <div id="message"></div>                        
                         <div>
-                            <button type="submit" id="submit" name="string" class="btn btn-primary" onclick="sub(); return false;">Next</button>
-                        </div>
-                    </form>
-                    <form method="post" action="" class="tab " id="models-form ">
-                        <div class="mb-3 form-check">
-                            <ul class="grid-list column-list nav">
-                                <?php echo get_data($array, null, 2, 1); ?>
-                            </ul>
-                        </div>
-                        <div>
-                            <button type="submit" id="submit" name="string" class="btn btn-primary" onclick="open_tab(event, 'brands-form'); return false;">Previous</button>
-                            <button type="submit" id="submit" name="string" class="btn btn-primary" onclick="sub(); return false;">Next</button>
-                        </div>
-                    </form>
-                    <form method="post" action="" class="tab " id="body-form ">
-                        <div class="mb-3 form-check">
-                            <ul class="grid-list column-list nav">
-                                <?php echo get_data($array, null, 2, 1); ?>
-                            </ul>
-                        </div>
-                        <div>
-                            <button type="submit" id="submit" name="string" class="btn btn-primary" onclick="open_tab(event, 'models-form'); return false;">Previous</button>
-                            <button type="submit" id="submit" name="string" class="btn btn-primary" onclick="sub(); return false;">Next</button>
-                        </div>
-                    </form>
-                    <form method="post" action="" class="tab " id="trim-form ">
-                        <div class="mb-3 form-check">
-                            <ul class="grid-list column-list nav">
-                                <?php echo get_data($array, null, 2, 1); ?>
-                            </ul>
-                        </div>
-                        <div>
-                            <button type="submit" id="submit" name="string" class="btn btn-primary" onclick="open_tab(event, 'body-form'); return false;">Previous</button>
-                            <button type="submit" id="submit" name="string" class="btn btn-primary" onclick="sub(); return false;">Next</button>
-                        </div>
-                    </form>
-                    <form method="post" action="" class="tab " id="level-form ">
-                        <div class="mb-3 form-check">
-                            <ul class="grid-list column-list nav">
-                                <?php echo get_data($array, null, 2, 1); ?>
-                            </ul>
-                        </div>
-                        <div>
-                            <button type="submit" id="submit" name="string" class="btn btn-primary" onclick="open_tab(event, 'trim-form'); return false;">Previous</button>
-                            <button type="submit" id="submit" name="string" class="btn btn-primary" onclick="sub(); return false;">Next</button>
-                        </div>
-                    </form>
-                    <form method="post" action="" class="tab " id="engine-form ">
-                        <div class="mb-3 form-check">
-                            <ul class="grid-list column-list nav">
-                                <?php echo get_data($array, null, 2, 1); ?>
-                            </ul>
-                        </div>
-                        <div>
-                            <button type="submit" id="submit" name="string" class="btn btn-primary" onclick="open_tab(event, 'level-form'); return false;">Previous</button>
-                            <button type="submit" id="submit" name="string" class="btn btn-primary" onclick="sub(); return false;">Next</button>
-                        </div>
-                    </form>
-                    <form method="post" action="" class="tab " id="transmission-form ">
-                        <div class="mb-3 form-check">
-                            <ul class="grid-list column-list nav">
-                                <?php echo get_data($array, null, 2, 1); ?>
-                            </ul>
-                        </div>
-                        <div>
-                            <button type="submit" id="submit" name="string" class="btn btn-primary" onclick="open_tab(event, 'engine-form'); return false;">Previous</button>
                             <button type="submit" id="submit" name="string" class="btn btn-primary" onclick="sub(); return false;">Next</button>
                         </div>
                     </form>
@@ -125,60 +49,78 @@ $count = 0;
     </main>
 
     <script>
-        jQuery('.nav').on('click', '.nav-link', function() {
-            jQuery('.nav-item_selected').removeClass('nav-item_selected');
-            jQuery(this).closest('.nav-item').addClass('nav-item_selected');
-        });
+        data = '';
+        brand = "<?php if (isset($_SESSION['brand'])) {
+                        echo $_SESSION['brand'];
+                    } else {
+                        echo "0";
+                    } ?>";
+        model = "<?php if (isset($_SESSION['model'])) {
+                        echo $_SESSION['model'];
+                    } else {
+                        echo "0";
+                    } ?>";
+        times = 1;
 
-        jQuery('.tab').on("change", ".btn", function() {
-            alert("Submit is pressed!!");
+        function select() {
+            jQuery(".nav-item").on("click", function() {
+                jQuery(".nav-item_selected").removeClass("nav-item_selected");
+                jQuery(this).closest(".nav-item").addClass("nav-item_selected");
+            });
+            jQuery('.nav-link').click(function(event) {
+
+                if (times > 2) {
+                    data = {
+                        id: times,
+                        brand: brand,
+                        model: model,
+                        value: event.target.value
+                    };
+
+                } else if (times == 2) {
+                    data = {
+                        id: times,
+                        brand: brand,
+                        value: event.target.value
+                    };
+                    model = event.target.value;
+                } else {
+                    data = {
+                        id: times,
+                        value: event.target.value
+                    };
+                }
+
+            });
+        }
+
+        jQuery(window).ready(function() {
+
+            jQuery("div#message").html('<?php process_data($cars_file, $cars_data, $file, "", "") ?>');
         });
+        // jQuery('itemValue').on("click", "itemValue", function() {
+        //     alert("Submit is pressed!!");
+        // });
 
         function sub() {
-            var count = 0;
-            var datas = jQuery(this).serialize();
             event.preventDefault();
-            jQuery.ajax({
-                method: "POST",
-                url: "",
-                data: datas,
-                success: function() {
-                    count + 1;
-                    jQuery("span#message").html("POST is successful");
-                    var sa = document.getElementsByClassName("tab");
-                    sa.innerHTML = "";
-                    for (s = 0; s <= sa; s++) {
-                        if ("active" in sa[s].classList) {
-                            sa[s].classList.remove("active");
-                            jQuery(sa[s].tagName).css('display', 'none');
-                            sa[s + 1].addClass(' active');
-                            jQuery(sa[s + 1].tagName).css('display', 'block');
-                            break;
-                        }
-                    }
-                    if ("active" in sa.classList) {
-                        sa.classList.remove("active");
-                        jQuery(sa.tagName).css('display', 'none');
-                        sa[1].addClass(' active');
-                        jQuery(sa[1].tagName).css('display', 'block');
+            ajaxurl = '//localhost/wp-content/plugins/car_builder/view/get_data.php';
 
-                    }
-                },
-                error: function() {
-                    alert('Failed to save data');
-                }
-            })
+            if (data == undefined || data == '') {
+                console.log("No item was selected")
+                alert("Please select a brand first")
+            } else {
+                jQuery.post(ajaxurl, data, function(response) {
+                    jQuery("div#message").html(response);
+                });
+            }
+            times += 1;
         }
     </script>
 
 
     <?php
-    var_dump($_POST);
-    foreach ($_POST as $getParam => $value) {
-        echo $getParam . ' = ' . $value . PHP_EOL;
-    }
-    echo "<script>alert('" . array_keys($_POST) . "');</script>";
-
+    echo "<script> console.log(2." . $_SESSION['times'] . ")</script>";
     astra_edit_post_link(
         sprintf(
             /* translators: %s: Name of current post */

@@ -1,7 +1,6 @@
 <?php
-
-
-// define('PLUGIN_DIR', ABSPATH . 'wp-content/plugins/car_builder/');
+define('PLUGIN_DIR', ABSPATH . 'wp-content/plugins/car_builder/');
+$count = $data_index = 0;
 
 function data_to_array($file, $data, $file_name)
 {
@@ -14,50 +13,85 @@ function data_to_array($file, $data, $file_name)
     }
 }
 
-function get_brands_array($array)
+function populate_data($item, $index)
 {
-    $brands = [];
-    for ($s = 1; $s <= count($array) - 1; $s++) {
-        if (!in_array($array[$s][1], $brands) && isset($array[$s][1])) {
-            array_push($brands, $array[$s][1]);
-        }
-    }
-    return $brands;
+    echo '<li onclick="select()" class="nav-item list-group list-group-checkable d-grid gap-2 border-0 w-auto " id="listOptionsInput' . $index . '"><input class="list-group-item-check pe-none nav-link" type="radio" name="itemValue" id="listGroupCheckableRadios' . $index . '" value="' . $item . '" checked=""><label class="list-group-item rounded-3 py-3" for="listGroupCheckableRadios' . $index . '">' . $item . '</label></li>';
 }
 
-function populate_data($array, $s)
+function render_form($array, $selected_item ,$selected_brand, $selected_model, $data_index)
 {
-    echo '<li class="nav-item " id="listOptionsInput' . $s . '"><a class="nav-link" name="itemValue" href="#' . $array . '">' . $array . '</a></li>';
+    echo    "<fieldset><legend>". $array[0][$data_index] ."</legend>";
+    echo    '<ul class="grid-list column-list nav-list">';
+    echo    get_data($array, $selected_item ,$selected_brand, $selected_model, $data_index);
+    echo    '</ul>';
+    echo    '</fieldset>';
 }
 
-function get_data($array, $condition, $pos, $prev_pos)
+
+function process_data($file, $data, $file_name, $selected_item ,$selected_brand, $selected_model)
+{
+    global $data_index;
+    $_SESSION['count'] = !isset($_SESSION['count']) ? 0 : $_SESSION['count'];
+    $_SESSION['count']++;
+    $data_index = $_SESSION['count'];
+
+    echo "<p>" . $_SESSION['count'] . "</p>";
+    $array = data_to_array($file, $data, $file_name);
+    render_form($array, $selected_item ,$selected_brand, $selected_model, $data_index);
+}
+
+
+function get_data($array, $selected_item ,$selected_brand, $selected_model, $pos)
 {
     $temp = [];
-    if (isset($pos) && isset($prev_pos)) {
-        for ($c = 1; $c <= count($array) - 1; $c++) {
-            if ($array[$c][$prev_pos] === $condition && !in_array($array[$c][$pos], $temp) && isset($array[$c][$pos])) {
-                array_push($temp, $array[$c][$pos]);
+    if ($pos > 1 && !empty($selected_model)) {
+        for ($index = 1; $index < count($array); $index++) {
+            $item = $array[$index][$pos];
+            $brand = $array[$index][1];
+            $model = $array[$index][2];
+            if ($brand === $selected_brand && $model === $selected_model && !in_array($item, $temp) && !empty($item)) {
+                array_push($temp, $item);
+            }
+        }
+    } else if ($pos > 1 && !empty($selected_brand)) {
+        for ($index = 1; $index < count($array); $index++) {
+            $item = $array[$index][$pos];
+            $brand = $array[$index][1];
+            if ($brand === $selected_brand && !in_array($item, $temp) && !empty($item)) {
+                array_push($temp, $item);
             }
         }
     } else {
-        for ($c = 1; $c <= count($array) - 1; $c++) {
-            if (!in_array($array[$c][$pos], $temp) && isset($array[$c][$pos])) {
-                array_push($temp, $array[$c][$pos]);
+        for ($index = 1; $index <= count($array); $index++) {
+            $item = ucfirst($array[$index][$pos]);
+            if (!in_array(trim($item), $temp) && !empty($item)) {
+                array_push($temp, trim($item));
             }
         }
     }
 
-    for ($s = 1; $s <= count($temp) - 1; $s++) {
-        populate_data($temp[$s], $s);
+    sort($temp);
+    for ($index = 0; $index < count($temp); $index++) {
+        if (!empty($array[$index])) {
+            populate_data($temp[$index], $index);
+        }
     }
-    
 }
 
-// function enqueue_frontend()
-// {
-//     wp_enqueue_style('style', plugin_dir_url(__FILE__) . 'css/style.css');
-//     wp_enqueue_script('javascript', plugin_dir_url(__FILE__) . 'js/javascript.js');
-// }
+
+function format($array)
+{
+    echo "<pre>";
+    print_r($array);
+    echo "</pre>";
+}
+
+
+function enqueue_frontend()
+{
+    wp_enqueue_style('style', plugin_dir_url(__FILE__) . 'css/style.css');
+    wp_enqueue_script('javascript', plugin_dir_url(__FILE__) . 'js/javascript.js');
+}
 // add_action('wp_enqueue_scripts', 'enqueue_frontend');
 
 
