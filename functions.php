@@ -1,7 +1,7 @@
 <?php
 
 
-define('PLUGIN_DIR', ABSPATH . 'wp-content/plugins/car_builder/');
+// define('PLUGIN_DIR', ABSPATH . 'wp-content/plugins/car_builder/');
 
 function data_to_array($file, $data, $file_name)
 {
@@ -53,11 +53,11 @@ function get_data($array, $condition, $pos, $prev_pos)
     
 }
 
-function enqueue_frontend()
-{
-    wp_enqueue_style('style', plugin_dir_url(__FILE__) . 'css/style.css');
-    wp_enqueue_script('javascript', plugin_dir_url(__FILE__) . 'js/javascript.js');
-}
+// function enqueue_frontend()
+// {
+//     wp_enqueue_style('style', plugin_dir_url(__FILE__) . 'css/style.css');
+//     wp_enqueue_script('javascript', plugin_dir_url(__FILE__) . 'js/javascript.js');
+// }
 // add_action('wp_enqueue_scripts', 'enqueue_frontend');
 
 
