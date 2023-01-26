@@ -4,31 +4,42 @@ $count = $data_index = 0;
 
 function data_to_array($file, $data, $file_name)
 {
-    if (($file = fopen($file_name, "r")) !== FALSE) {
-        while (($data = fgetcsv($file, 1000, ",")) !== FALSE) {
-            $array[] = $data;
+    try {
+        if (!file_exists($file_name)) {
+            throw new Exception("File not found");
         }
-        fclose($file);
-        return $array;
+        $array = [];
+        if (($file = fopen($file_name, "r")) !== FALSE) {
+            while (($data = fgetcsv($file, 1000, ",")) !== FALSE) {
+                $array[] = $data;
+            }
+            fclose($file);
+            return $array;
+        }
+    } catch (Exception $e) {
+        echo $e->getMessage();
     }
 }
 
 function populate_data($item, $index)
 {
-    echo '<li onclick="select()" class="nav-item list-group list-group-checkable d-grid gap-2 border-0 w-auto " id="listOptionsInput' . $index . '"><input class="list-group-item-check pe-none nav-link" type="radio" name="itemValue" id="listGroupCheckableRadios' . $index . '" value="' . $item . '" checked=""><label class="list-group-item rounded-3 py-3" for="listGroupCheckableRadios' . $index . '">' . $item . '</label></li>';
+    $item = htmlspecialchars($item, ENT_QUOTES, 'UTF-8'); // Escape any special characters in the item to prevent XSS attacks
+    $index = (int) $index; // Cast the index as an integer to prevent injection attacks
+    echo '<li onclick="select()" class="nav-item list-group list-group-checkable d-grid gap-2 border-0 w-auto " id="listOptionsInput' . $index . '">
+        <input class="list-group-item-check pe-none nav-link" type="radio" name="itemValue" id="listGroupCheckableRadios' . $index . '" value="' . $item . '" checked="">
+        <label class="list-group-item rounded-3 py-3" for="listGroupCheckableRadios' . $index . '">' . $item . '</label>
+    </li>';
 }
 
-function render_form($array, $selected_item ,$selected_brand, $selected_model, $data_index)
+function render_form($array, $selected_item, $data_index)
 {
-    echo    "<fieldset><legend>". $array[0][$data_index] ."</legend>";
-    echo    '<ul class="grid-list column-list nav-list">';
-    echo    get_data($array, $selected_item ,$selected_brand, $selected_model, $data_index);
+    echo    '<ul class="grid-list data_indexumn-list nav-list">';
+    echo    get_data($array, $selected_item, $data_index);
     echo    '</ul>';
-    echo    '</fieldset>';
 }
 
 
-function process_data($file, $data, $file_name, $selected_item ,$selected_brand, $selected_model)
+function process_data($file, $data, $file_name, $selected_item)
 {
     global $data_index;
     $_SESSION['count'] = !isset($_SESSION['count']) ? 0 : $_SESSION['count'];
@@ -37,37 +48,55 @@ function process_data($file, $data, $file_name, $selected_item ,$selected_brand,
 
     echo "<p>" . $_SESSION['count'] . "</p>";
     $array = data_to_array($file, $data, $file_name);
-    render_form($array, $selected_item ,$selected_brand, $selected_model, $data_index);
+    render_form($array, $selected_item, $data_index);
 }
 
 
-function get_data($array, $selected_item ,$selected_brand, $selected_model, $pos)
+function get_data($array, $selected_item, $pos)
 {
-    $temp = [];
-    if ($pos > 1 && !empty($selected_model)) {
-        for ($index = 1; $index < count($array); $index++) {
-            $item = $array[$index][$pos];
-            $brand = $array[$index][1];
-            $model = $array[$index][2];
-            if ($brand === $selected_brand && $model === $selected_model && !in_array($item, $temp) && !empty($item)) {
-                array_push($temp, $item);
+    $temp = $ids = [];
+
+    if (!empty($selected_item)) {
+        // check if more than 2 items are selected
+        if (count($selected_item) > 2) {
+            for ($index = 1; $index < count($array); $index++) {
+                $item = $array[$index][$pos];
+                if ($array[$index][1] === $selected_item[0] && $array[$index][2] === $selected_item[1] && !in_array($item, $temp) && !empty($item)) {
+                    for ($i = 2; $i < count($selected_item); $i++) {
+                        if (!in_array($i, $ids) && !empty($selected_item[$i]) && $array[$index][$i + 1] === $selected_item[$i]) {
+                            array_push($ids, $i);
+                        }
+                    }
+                    if ($array[$index][end($ids)] == $array[$index][$pos - 1]) {
+                        array_push($temp, $item);
+                        $ids = [];
+                    }
+                }
+            }
+        } else if (count($selected_item) == 2) {
+            for ($index = 1; $index < count($array); $index++) {
+                $item = $array[$index][$pos];
+                if (!empty($item) && $array[$index][1] === $selected_item[0] && $array[$index][2] === $selected_item[1] && !in_array($item, $temp)) {
+                    array_push($temp, $item);
+                }
+            }
+        } else if (count($selected_item) == 1) {
+            for ($index = 1; $index < count($array); $index++) {
+                $item = ucfirst($array[$index][$pos]);
+                if (!in_array(trim($item), $temp) && !empty($item)) {
+                    array_push($temp, trim($item));
+                }
             }
         }
-    } else if ($pos > 1 && !empty($selected_brand)) {
+    } else if ($pos == 1) {
         for ($index = 1; $index < count($array); $index++) {
-            $item = $array[$index][$pos];
-            $brand = $array[$index][1];
-            if ($brand === $selected_brand && !in_array($item, $temp) && !empty($item)) {
-                array_push($temp, $item);
-            }
-        }
-    } else {
-        for ($index = 1; $index <= count($array); $index++) {
             $item = ucfirst($array[$index][$pos]);
             if (!in_array(trim($item), $temp) && !empty($item)) {
                 array_push($temp, trim($item));
             }
         }
+    } else {
+        echo "<script>console.log('No text was passed');</script>";
     }
 
     sort($temp);
@@ -77,6 +106,7 @@ function get_data($array, $selected_item ,$selected_brand, $selected_model, $pos
         }
     }
 }
+
 
 
 function format($array)
