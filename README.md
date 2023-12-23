@@ -1,4 +1,4 @@
-Car Price Calculator
+Wordpress plugin: Car Price Calculator
 ====================
 
 This script is used to calculate the price of a car based on the selected options. The options include:
